@@ -1,0 +1,7 @@
+#!/bin/bash
+CMD_BASE="qemu-system-riscv64 -machine sifive_u -bios none -device loader,file=nopsled.bin,addr=0x80000000"
+MORE_OPTS="-display none -serial stdio"
+MORE_OPTS+=" -gdb tcp::1235 -S"
+CMD="$CMD_BASE $MORE_OPTS"
+echo "$CMD"
+${CMD}

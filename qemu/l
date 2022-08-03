@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")"
+
+RV_BITS=64
+
+cat << EOF > .gdbinit
+set architecture riscv:rv${RV_BITS}
+target remote :1235
+layout asm
+layout regs
+b *0x80000000
+c
+EOF
+
+QEMU_BIN="qemu-system-riscv${RV_BITS}"
+BASE="${QEMU_BIN} -machine sifive_u -bios none -device loader,file=out/shellcode.bin,addr=0x80000000"
+CMD="${BASE} -display none -serial stdio"
+#CMD="${BASE} -display none -serial stdio -gdb tcp::1235 -S"
+echo "$CMD"
+${CMD}

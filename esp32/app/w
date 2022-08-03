@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+
+idf.py -b 2000000 build flash
+idf.py monitor
