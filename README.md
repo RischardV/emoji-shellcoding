@@ -23,26 +23,28 @@ You can find our previous work on RISC-V alphanumeric shellcoding here:
 
 Folder contents:
 - `qemu`: Full source code and prebuilt binary for the baremetal QEMU demo
+- `qemu_short`: Same as `qemu`, but a shorter version
 - `esp32`: Demos running on the Espressif ESP32-C3 board
 - `hifiveu`: Demos running on the HiFive-Unleashed board
 - `payload`: Source code of the payloads used
 - `block`: How we generated the available instructions
 - `nopsled`: The source code of our ⛔🛷 nopsled
-- `scripts`: Various helpers
 
 ## Quick-try
 
-Building the shellcodes requires to build a RISC-V toolchain from source.
+Building the shellcodes requires a RISC-V toolchain.
 We only provide easy-to-test pre-built QEMU baremetal shellcodes.
 
 The only prerequisite is having a RISC-V QEMU v6.0.0 or newer [https://www.qemu.org/](https://www.qemu.org/).
 On Ubuntu 22.04, you can install it using `apt install qemu-system-misc`.
 
 Then:
-  - `cd emoji-shellcoding/qemu/prebuilt`
-  - `cat shellcode.bin`
+  - `cd emoji-shellcoding/paper_hello_world`
+  - `cat qemu_miniclog_small.bin`
     (optional, to print the shellcode. Open it in your favorite editor if your console does not support emojis)
   - `./launch_prebuilt`   use Ctrl+C to exit
+
+You can modify `launch_prebuilt` to run `qemu_miniclog_medium.bin` or `qemu_miniclog_large.bin` instead.
 
 ## Building && Testing
 

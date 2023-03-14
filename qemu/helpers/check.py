@@ -38,12 +38,12 @@ def check_file(filename: str, emojis: EmojiDict) -> bool:
         data = f.read()
         i = 0
         while i < len(data):
-            l = min_emoji_len
-            while l <= max_emoji_len:
+            l = max_emoji_len
+            while l >= min_emoji_len:
                 if data[i : i + l].hex() in emojis:
                     break
-                l += 1
-            if l > max_emoji_len:
+                l -= 1
+            if l < min_emoji_len:
                 print(f"Bad sequence in {filename} at offset {i} (0x{i:06X})", file=sys.stderr)
                 return False
             i += l

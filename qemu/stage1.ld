@@ -7,7 +7,7 @@ ENTRY (_start)
 
 SECTIONS
 {
-    . = 0x80000000;
-    .text . : SUBALIGN(4096) { *(.text) }
+    . = 0x80000800;
+    .text . : SUBALIGN(4) { *(.text) }
     .data : { *(.data) }
 }

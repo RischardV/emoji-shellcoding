@@ -9,7 +9,7 @@ _start:
     fence.i
     auipc a5,0x0
     addi  a5,a5,0x16 # a5 = stringptr
-    lui   a3,0x10010 # a3 = SERIAL_BASE = 0x10013000U
+    lui   a3,0x10010 # a3 = SERIAL_BASE = 0x10010000U
 next:
     lbu   a4,0(a5)
     sw    a4,0(a3)

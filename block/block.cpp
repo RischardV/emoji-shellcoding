@@ -495,7 +495,7 @@ static Block make_block(const Instruction &instr) {
         block.is_sequence = true;
         return block;
     }
-    /* FIXME: Handle case where instr is contained in the middle on a single emoji */
+    /* FIXME: Handle case where instr is contained in the middle of a single emoji */
     for (size_t i=0; i<=goal.size(); i++) {
         Bytes buf_left = Bytes(goal.begin(), goal.begin() + i);
         Bytes buf_right = Bytes(goal.begin() + i, goal.end());
@@ -528,7 +528,7 @@ static void make_good_list(void) {
             std::string text_pad = std::string(40-text_len, ' ');
             std::cout << instr.bytes() << "\t"
                       << instr.text() << text_pad << "\t"
-                      << (need_prefix ? "%NP " : "")
+                      << (need_prefix ? "%NP" : "")
                       << std::endl;
         }
     }

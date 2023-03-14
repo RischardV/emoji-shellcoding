@@ -1,0 +1,1 @@
+../qemu/stage1.ld

@@ -52,6 +52,8 @@ def gen_sequences(sequences_files: list[str], build_dir: str) -> Sequences:
             for row in reader:
                 if row[1].strip().startswith("unqualified"):
                     continue
+                if row[1].strip().startswith("component"):
+                    continue
                 sequence = row[0].strip()
                 if ".." in sequence:
                     if " " in sequence:

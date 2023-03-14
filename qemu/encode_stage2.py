@@ -6,39 +6,82 @@
 #
 
 import argparse
+import json
+import sys
 
 
 def argparser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Stage2 encoder")
     parser.add_argument("-i", "--input", help="Stage 2 input file (binary form)", required=True)
     parser.add_argument("-o", "--output", help="Encoded stage 2 output file (assembly form)", required=True)
+    parser.add_argument("-k", "--kind", help="Iteration number of the encoding kind", type=int, default=1)
+    parser.add_argument("--k2_json", help="Prebuilt json file for -k 2 kind.")
     return parser.parse_args()
 
 
-def encode_file(input_file: str, output_file: str) -> None:
+def encode_file_k1(in_data: bytes) -> str:
     """
-    Dumb version using only 3 high-level gadgets
+    Dumb version using only 4 high-level gadgets
     """
-    with open(input_file, "rb") as in_f:
-        with open(output_file, "w", encoding="utf-8") as out_f:
-            in_data = in_f.read()
-            val = 1
-            for c in in_data:
-                out_f.write(f"# From 0x{val:02X} to 0x{c:02X}\n")
-                diff = (256 + c - val) % 256
-                while diff >= 16:
-                    out_f.write("incr16_a1\n")
-                    diff -= 16
-                while diff > 0:
-                    out_f.write("incr_a1\n")
-                    diff -= 1
-                val = c
-                out_f.write("stage2_write_byte\n")
+
+    out_data = ""
+    val = 1
+    for c in in_data:
+        out_data += f"# From 0x{val:02X} to 0x{c:02X}\n"
+        diff = (256 + c - val) % 256
+        while diff >= 16:
+            out_data += "incr16_a1\n"
+            diff -= 16
+        while diff > 0:
+            out_data += "incr_a1\n"
+            diff -= 1
+        val = c
+        out_data += "stage2_write_byte\n"
+    return out_data
+
+
+def encode_file_k2(in_data: bytes, json_file: str) -> str:
+    """
+    Improved version over k1, with more gadgets
+    """
+
+    with open(json_file, "r", encoding="utf-8") as json_handle:
+        fromto = json.load(json_handle)
+
+    out_data = ""
+    val = 1
+    for c in in_data:
+        out_data += f"# From 0x{val:02X} to 0x{c:02X}\n"
+        strategy = fromto[str(val)][c]
+        for gadget in strategy["gadgets"]:
+            out_data += f"{gadget}\n"
+        val = c
+        out_data += "stage2_write_byte\n"
+    return out_data
+
+
+def main() -> None:
+    args = argparser()
+
+    with open(args.input, "rb") as in_f:
+        in_data = in_f.read()
+
+    match args.kind:
+        case 1:
+            out_data = encode_file_k1(in_data)
+        case 2:
+            out_data = encode_file_k2(in_data, args.k2_json)
+        case _:
+            print(f"Unknown kind {args.kind}", file=sys.stderr)
+            sys.exit(1)
+
+    with open(args.output, "w", encoding="utf-8") as out_f:
+        out_f.write(out_data)
 
 
 if __name__ == "__main__":
-    args = argparser()
-    encode_file(args.input, args.output)
+    main()
+
 
 helper_for_dev = """
 8695        add	a1,a1,ra                            	%NP

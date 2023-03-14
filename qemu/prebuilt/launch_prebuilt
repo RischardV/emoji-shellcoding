@@ -3,18 +3,18 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 RV_BITS=64
+LOAD_ADDR=0x80000800
 
 cat << EOF > .gdbinit
 set architecture riscv:rv${RV_BITS}
 target remote :1235
 layout asm
 layout regs
-b *0x80000000
-c
+focus cmd
 EOF
 
 QEMU_BIN="qemu-system-riscv${RV_BITS}"
-BASE="${QEMU_BIN} -machine sifive_u -bios none -device loader,file=shellcode.bin,addr=0x80000000"
+BASE="${QEMU_BIN} -machine sifive_u -bios none -device loader,addr=${LOAD_ADDR},cpu-num=0 -device loader,file=shellcode.bin,addr=${LOAD_ADDR}"
 CMD="${BASE} -display none -serial stdio"
 #CMD="${BASE} -display none -serial stdio -gdb tcp::1235 -S"
 echo "$CMD"
